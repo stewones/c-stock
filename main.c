@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <conio.h>
 //define as variaveis de escopo global da app
 
 #define PRODUCT_LIMIT 100
@@ -10,18 +11,22 @@ float PRODUCT_PRICES[PRODUCT_LIMIT];
 
 int main()
 {
-    //exibe opcoes do menu e atribui o numero da opc na variavel MENU
-    menu_choose();
+    system("cls");
+    do {
+        //exibe opcoes do menu e atribui o numero da opc na variavel MENU
+        menu_choose();
+        //executa a ação do menu
+        switch(MENU) {
+            case 1:
+                system("cls");
+                add_product();
+            break;
+        }
+    } while (MENU>0 && MENU <=5);
 
-    //vamos fazer o que tiver que ser feito de acordo com a opc selecionada
-    switch(MENU) {
-        case 1:
-        add_product();
-        break;
-    }
-
-    system('pause');
-    return 0;
+    printf("---------------\n");
+    printf(" Opc invalida! \n");
+    printf("---------------\n");
 }
 
 //opcs do menu
@@ -48,29 +53,50 @@ int add_product() {
  //printf("%i",MENU);
     int code;
     printf("\n");
-    printf("\n");
     printf(" Insira o codigo do produto: ");
     scanf("%i",&code);
 
-    //se nao tiver codigo digitado, ou for 0, volta pro menu principal
+    //se nao tiver codigo digitado, volta pro menu principal
     if (!code) {
        main();
     }else{
         //verifica se existe codigo de produto cadastrado
         if (verify_product(code)) {
-            int continues = 1;
-            PRODUCT_CODES[get_code_position()] = code;
-            printf("---------------------------------\n");
-            printf(" Produto cadastrado com sucesso! \n");
-            printf("---------------------------------\n");
-            printf(" Deseja cadastrar outro produto? \n\n 1 - sim | 0 - nao => ");
-            scanf("%i",&continues);
-            printf("\n");
+            //pegar preço
+            float price = get_price();
+            int stock = get_stock();
+            if (price && stock) {
+                //pega a proxima posição disponivel no vetor
+                int position = get_next_position();
 
-            if(continues)
-                add_product();
-            else
-                main();
+                //salva nos vetores
+                PRODUCT_CODES[position] = code;
+                PRODUCT_PRICES[position] = price;
+                PRODUCT_STOCK[position] = stock;
+
+                //saida
+                system("cls");
+                printf("---------------------------------\n");
+                printf(" Produto cadastrado com sucesso! \n");
+                printf("---------------------------------\n");
+                printf(" Deseja cadastrar outro produto? \n\n 1 - sim | 0 - nao => ");
+                printf("\n");
+
+                //pergunta se quer continuar
+                int continues = 1;
+                scanf("%i",&continues);
+
+                if(continues)
+                    add_product();
+                else
+                    main();
+            }else{
+                printf("\n");
+                printf("------------------------\n");
+                printf(" Erro: Valor incorreto! \n");
+                printf("------------------------\n");
+                add_product(); //reinicia logica de inserção do produto
+            }
         }else{
             printf("-----------------------------------\n");
             printf(" Este codigo de produto ja existe! \n");
@@ -93,11 +119,37 @@ int verify_product(code) {
 }
 
 //retorna a proxima posicao disponivel no vetor de codigos
-int get_code_position() {
+int get_next_position() {
     int i;
     //loop pra pegar proxima posicao disponivel
     for (i=0;i<PRODUCT_LIMIT;i++) {
       if (!PRODUCT_CODES[i]) return i;
     }
     return 0;
+}
+
+//pegar preço do produto e verificar se eh valido
+int get_price() {
+    float price;
+    printf("\n");
+    printf(" Valor do produto em R$: ");
+    scanf("%f",&price);
+
+    if (price > 0)
+        return price;
+    else
+        return 0;
+}
+
+//pegar quantidade do stock e verificar se eh valido
+int get_stock() {
+    int stock;
+    printf("\n");
+    printf(" Quantidade no estoque: ");
+    scanf("%i",&stock);
+
+    if (stock >= 0)
+        return stock;
+    else
+        return 0;
 }
