@@ -32,6 +32,10 @@ int main()
             system("cls");
             report_product(1);
             break;
+        case 5:
+            system("cls");
+            report_product(2);
+            break;
         default:
             system("exit");
         }
@@ -64,7 +68,7 @@ int menu_choose()
     printf(" 0 - Voltar ao menu principal \n");
     printf("\n");
     printf("\n");
-    printf(" Digite uma opc valida: ");
+    printf(" Digite uma opc do menu: ");
     scanf("%i",&MENU);
 }
 
@@ -255,7 +259,7 @@ int delete_product()
             scanf("%i",&continues);
             if (continues)
             {
-                //logica da exclusao consiste em reposicionar o vetor
+                //logica da exclusao consiste em re-posicionar o vetor
                 //colocando o item da direita pra esquerda a partir da posicao que deseja excluir
                 while (exists < product_total())
                 {
@@ -281,19 +285,74 @@ int delete_product()
 //relatorio de produtos
 int report_product(type)
 {
+    int code;
     switch (type)
     {
     case 1: //relatorio 1
-        order_asc();
+        order_asc(); //ordenar codigos em ordem crescente
         int i;
-        int total = product_total();
+        int total = product_total(); //pega o total de produtos cadastrados
+        printf("\n");
+        printf(" Relatorio de produtos");
         for (i = 0; i < total; i++)
         {
             printf("\n---------------------------------\n");
             printf(" Produto codigo: %i \n Valor: R$ %02f \n Estoque: %i", PRODUCT_CODES[i], PRODUCT_PRICES[i], PRODUCT_STOCK[i]);
-            if (i == total-1) {
+            if (i == total-1)
+            {
+                printf("\n---------------------------------\n");
+                printf(" %i produtos encontrados.",total);
+                printf("\n");
+                printf("\n");
+                printf("\n");
+                printf("\n");
+            }
+        }
+        break;
+    case 2: //relatorio 2
+        printf("\n");
+        printf(" Insira o codigo do produto: ");
+        scanf("%i",&code);
+        //se nao tiver codigo digitado, volta pro menu principal
+        if (!code)
+        {
+            main();
+        }
+        else
+        {
+            //pego a posicao do codigo do produto, caso ele existir
+            int exists = get_position(code);
+            //se nao existir produto
+            if (exists == -1)
+            {
+                system("cls");
+                printf("------------------------------------\n");
+                printf(" Este codigo de produto nao existe! \n");
+                printf("------------------------------------\n");
+                report_product(2); //recomeço o relatorio 2
+            }
+            else
+            {
+                system("cls");
+                printf("\n---------------------------------\n");
+                printf(" Produto codigo: %i \n Valor: R$ %02f \n Estoque: %i", PRODUCT_CODES[exists], PRODUCT_PRICES[exists], PRODUCT_STOCK[exists]);
                 printf("\n---------------------------------\n");
                 printf("\n");
+                printf("\n");
+                printf(" Deseja pesquisar outro produto? \n");
+                printf(" 1 - sim | 0 - nao => ");
+
+                //pergunta se deseja pesquisar outro produto
+                int continues = 0;
+                scanf("%i",&continues);
+                if (continues)
+                {
+                    report_product(2);
+                }
+                else
+                {
+                    main(); //retorna ao menu principal
+                }
             }
         }
         break;
