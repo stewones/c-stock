@@ -4,10 +4,10 @@
 //define as variaveis de escopo global da app
 
 #define PRODUCT_LIMIT 100
-int MENU = 0;
-int PRODUCT_CODES[PRODUCT_LIMIT];
-int PRODUCT_STOCK[PRODUCT_LIMIT];
-float PRODUCT_PRICES[PRODUCT_LIMIT];
+int MENU = 0; //guarda menu do momento
+int PRODUCT_CODES[PRODUCT_LIMIT]; //vetor de codigos
+int PRODUCT_STOCK[PRODUCT_LIMIT]; //vetor de estoque
+float PRODUCT_PRICES[PRODUCT_LIMIT]; //vetor de preços
 
 int main()
 {
@@ -21,6 +21,16 @@ int main()
                 system("cls");
                 add_product();
             break;
+            case 2:
+                system("cls");
+                edit_product();
+            break;
+            case 3:
+                system("cls");
+                delete_product();
+            break;
+            default:
+                system("exit");
         }
     } while (MENU>0 && MENU <=5);
 
@@ -44,13 +54,15 @@ int menu_choose() {
     printf(" 4 - Todos os produtos \n");
     printf(" 5 - Produto especifico \n");
     printf("\n");
-    printf("\n : ");
+    printf(" Outros \n");
+    printf("--------------------------\n");
+    printf(" 0 - Voltar ao menu principal \n");
+    printf("\n");
     scanf("%i",&MENU);
 }
 
 //adiciona novo produto
 int add_product() {
- //printf("%i",MENU);
     int code;
     printf("\n");
     printf(" Insira o codigo do produto: ");
@@ -60,19 +72,19 @@ int add_product() {
     if (!code) {
        main();
     }else{
-        //verifica se existe codigo de produto cadastrado
-        if (verify_product(code)) {
+        //verifica se ja nao existe codigo de produto cadastrado
+        if (!product_exists(code)) {
             //pegar preço
             float price = get_price();
             int stock = get_stock();
             if (price && stock) {
                 //pega a proxima posição disponivel no vetor
-                int position = get_next_position();
+                int New = next_position();
 
                 //salva nos vetores
-                PRODUCT_CODES[position] = code;
-                PRODUCT_PRICES[position] = price;
-                PRODUCT_STOCK[position] = stock;
+                PRODUCT_CODES[New] = code;
+                PRODUCT_PRICES[New] = price;
+                PRODUCT_STOCK[New] = stock;
 
                 //saida
                 system("cls");
@@ -80,16 +92,17 @@ int add_product() {
                 printf(" Produto cadastrado com sucesso! \n");
                 printf("---------------------------------\n");
                 printf(" Deseja cadastrar outro produto? \n\n 1 - sim | 0 - nao => ");
-                printf("\n");
 
                 //pergunta se quer continuar
                 int continues = 1;
                 scanf("%i",&continues);
 
-                if(continues)
+                if(continues) {
+                    system("cls");
                     add_product();
-                else
+                }else{
                     main();
+                }
             }else{
                 printf("\n");
                 printf("------------------------\n");
@@ -98,6 +111,7 @@ int add_product() {
                 add_product(); //reinicia logica de inserção do produto
             }
         }else{
+            system("cls");
             printf("-----------------------------------\n");
             printf(" Este codigo de produto ja existe! \n");
             printf("-----------------------------------\n");
@@ -106,26 +120,161 @@ int add_product() {
     }
 }
 
+//edita um produto
+int edit_product() {
+    int code;
+    printf("\n");
+    printf(" Insira o codigo do produto: ");
+    scanf("%i",&code);
+
+    //se nao tiver codigo digitado, volta pro menu principal
+    if (!code) {
+        main();
+    }else{
+        //pego a posicao do codigo do produto, caso ele existir
+        int exists = get_position(code);
+        //se nao existir produto
+        if (exists == -1) {
+            system("cls");
+            printf("------------------------------------\n");
+            printf(" Este codigo de produto nao existe! \n");
+            printf("------------------------------------\n");
+            edit_product(); //recomeço a edição
+        }else{
+            system("cls");
+            printf("----------------------------------------------\n");
+            printf(" Produto encontrado, prossiga com a alteracao \n");
+            printf("----------------------------------------------\n");
+            //produto existe, prosseguir com a alteração
+            float price = get_price();
+            int stock = get_stock();
+
+            if (price && stock) {
+                //salva nos vetores
+                PRODUCT_PRICES[exists] = price;
+                PRODUCT_STOCK[exists] = stock;
+
+                //saida
+                system("cls");
+                printf("---------------------------------\n");
+                printf(" Produto atualizado com sucesso! \n");
+                printf("---------------------------------\n");
+                printf(" Deseja alterar outro produto? \n\n 1 - sim | 0 - nao => ");
+
+                //pergunta se quer continuar
+                int continues = 1;
+                scanf("%i",&continues);
+
+                if(continues) {
+                    system("cls");
+                    edit_product();
+                }else{
+                    main();
+                }
+            }else{
+                system("cls");
+                printf("--------------------------\n");
+                printf(" Erro: valores incorretos \n");
+                printf("--------------------------\n");
+                edit_product(); //recomeço a edição
+            }
+        }
+    }
+}
+
+//deleta um produto
+int delete_product() {
+    int code;
+    printf("\n");
+    printf(" Insira o codigo do produto a ser excluido: ");
+    scanf("%i",&code);
+
+    //se nao tiver codigo digitado, volta pro menu principal
+    if (!code) {
+        main();
+    }else{
+        //pego a posicao do codigo do produto, caso ele existir
+        int exists = get_position(code);
+        //se nao existir produto
+        if (exists == -1) {
+            system("cls");
+            printf("------------------------------------\n");
+            printf(" Este codigo de produto nao existe! \n");
+            printf("------------------------------------\n");
+            edit_product(); //recomeço a edição
+        }else{
+            system("cls");
+            printf("-----------------------------------------------------------------------\n");
+            printf(" Produto encontrado, tem certeza que deseja prosseguir com a exclusao? \n");
+            printf("-----------------------------------------------------------------------\n");
+            printf(" Deseja alterar outro produto? \n\n 1 - sim | 0 - nao => ");
+
+             //pergunta se quer continuar
+             int continues = 0;
+             scanf("%i",&continues);
+             if(continues) {
+                 while (exists < product_total()) {
+                    PRODUCT_PRICES[exists] = PRODUCT_PRICES[exists+1];
+                    PRODUCT_STOCK[exists] = PRODUCT_STOCK[exists+1];
+                    PRODUCT_CODES[exists] = PRODUCT_CODES[exists+1];
+                    exists++;
+                }
+
+                system("cls");
+                printf("--------------------------------\n");
+                printf(" Produto excluido com sucesso ! \n");
+                printf("--------------------------------\n");
+                main();
+
+            }else{
+                main(); //retorna ao menu principal
+            }
+        }
+    }
+}
+
+
+//retorna total de produtos cadastrados
+int product_total() {
+    int i, total = 0;
+    for (i=0;i<PRODUCT_LIMIT;i++) {
+      if (PRODUCT_CODES[i]) total++;
+    }
+    return total;
+}
+
+
 //verifica se existe codigo de produto cadastrado
-int verify_product(code) {
+int product_exists(code) {
     int i;
     //loop pra verificar se existe produto
     for (i=0;i<PRODUCT_LIMIT;i++) {
-      //caso existir, retorna 0. equivalente a false
-      if (PRODUCT_CODES[i] == code) return 0;
+
+      //caso existir, retorna a posicao da existencia.
+      if (PRODUCT_CODES[i] == code) return 1;
     }
-    //caso nao existir, retorna 1. equivalente a true
-    return 1;
+    //caso nao existir, retorna 0. equivalente a true
+    return 0;
 }
 
 //retorna a proxima posicao disponivel no vetor de codigos
-int get_next_position() {
+int next_position() {
     int i;
     //loop pra pegar proxima posicao disponivel
     for (i=0;i<PRODUCT_LIMIT;i++) {
       if (!PRODUCT_CODES[i]) return i;
     }
     return 0;
+}
+
+//retorna a posicao do codigo solicitado
+int get_position(code) {
+    int i;
+    //loop pra pegar proxima posicao disponivel
+    for (i=0; i<PRODUCT_LIMIT; i++) {
+      if (PRODUCT_CODES[i] == code) return i;
+    }
+    return -1;
 }
 
 //pegar preço do produto e verificar se eh valido
