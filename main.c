@@ -45,6 +45,8 @@ int main()
     printf("---------------\n");
     printf(" Opc invalida! \n");
     printf("---------------\n");
+    system("pause");
+    main();
 }
 
 //opcs do menu
@@ -83,12 +85,12 @@ int add_product()
     //se nao tiver codigo digitado, volta pro menu principal
     if (!code)
     {
-        main();
+        main(); //voltar pro menu principal
     }
     else
     {
         //verifica se ja nao existe codigo de produto cadastrado
-        if (!product_exists(code))
+        if (!product_exists(code)) //se nao existir codigo do produto
         {
             //pegar preço
             float price = get_price();
@@ -376,16 +378,16 @@ int product_total()
 //verifica se existe codigo de produto cadastrado
 int product_exists(code)
 {
-    int i;
+    int i; //i = contador
     //loop pra verificar se existe produto
     for (i=0;i<PRODUCT_LIMIT;i++)
     {
 
         //caso existir, retorna a posicao da existencia.
-        if (PRODUCT_CODES[i] == code) return 1;
+        if (PRODUCT_CODES[i] == code) return 1; //equivalente a true
     }
     //caso nao existir, retorna 0. equivalente a true
-    return 0;
+    return 0; //seria o equivalente a false
 }
 
 //retorna a proxima posicao disponivel para cadastrar o novo produto
