@@ -297,7 +297,7 @@ int report_product(type)
         for (i = 0; i < total; i++)
         {
             printf("\n---------------------------------\n");
-            printf(" Produto codigo: %i \n Valor: R$ %02f \n Estoque: %i", PRODUCT_CODES[i], PRODUCT_PRICES[i], PRODUCT_STOCK[i]);
+            printf(" Produto codigo: %i \n Valor: R$ %.2f \n Estoque: %i", PRODUCT_CODES[i], PRODUCT_PRICES[i], PRODUCT_STOCK[i]);
             if (i == total-1)
             {
                 printf("\n---------------------------------\n");
@@ -335,7 +335,7 @@ int report_product(type)
             {
                 system("cls");
                 printf("\n---------------------------------\n");
-                printf(" Produto codigo: %i \n Valor: R$ %02f \n Estoque: %i", PRODUCT_CODES[exists], PRODUCT_PRICES[exists], PRODUCT_STOCK[exists]);
+                printf(" Produto codigo: %i \n Valor: R$ %.2f \n Estoque: %i", PRODUCT_CODES[exists], PRODUCT_PRICES[exists], PRODUCT_STOCK[exists]);
                 printf("\n---------------------------------\n");
                 printf("\n");
                 printf("\n");
