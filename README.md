@@ -7,4 +7,4 @@
 Apenas extraia `c-stock-exe.zip` e rode o executável ".exe"
 
 ## License
-[MIT](https://github.com/stewones/c-stock/blob/master/license.md) © [Stewan Pacheco](http://stpa.co/)
+[MIT](https://github.com/stewwan/c-stock/blob/master/license.md) © [Stewan Silva](http://stewan.io/)
